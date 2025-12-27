@@ -54,7 +54,7 @@ html, body { margin: 0; padding: 0; }
   margin: 6px 0;
   padding: 8px 10px;
   border-radius: 10px;
-  max-width: 80%;
+  max-width: 95%;
   word-wrap: break-word;
   font-size: 14px;
 }
@@ -158,7 +158,6 @@ html, body { margin: 0; padding: 0; }
 document.querySelector(".backBtn").onclick = ()=>{
   window.location.href = "https://www.kashimaparkhotel.com/";
 };
-
   
 /* ===== FAQ（例：ここに全文入れてOK） ===== */
 const faq=[
@@ -191,7 +190,7 @@ const userInput = document.getElementById("userInput");
 const sendBtn = document.getElementById("sendBtn");
 const micBtn = document.getElementById("micBtn");
 
-/* ===== タイプライター表示（bot専用） ===== */
+/* ===== タイプライター表示 ===== */
 function addBotMessageTypewriter(text){
   const div = document.createElement("div");
   div.className = "msg bot";
@@ -227,7 +226,7 @@ sendBtn.onclick=()=>{
   userInput.value="";
 };
 
-/* ===== Enterキー送信（PC） ===== */
+/* ===== Enterキー送信 ===== */
 userInput.addEventListener("keydown", e => {
   if (e.key === "Enter") {
     e.preventDefault();
@@ -305,5 +304,3 @@ resetTimer();
 
 </body>
 </html>
-
-
