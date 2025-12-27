@@ -64,7 +64,7 @@ html, body { margin: 0; padding: 0; }
   align-self: flex-end;
 }
 
-/* ★ここだけ修正（確実に中央） */
+/* ★触らない */
 .bot {
   background: #f0f0f0;
   margin-left: auto;
@@ -104,14 +104,13 @@ html, body { margin: 0; padding: 0; }
   flex-shrink: 0;
 }
 
-/* ===== 録音中：色のみ変更 ===== */
+/* ===== 録音中 ===== */
 #micBtn.recording {
   background: #0078d7;
   color: #ff5252;
   position: relative;
 }
 
-/* ===== 赤丸 外側パルス（タップ非干渉） ===== */
 #micBtn.recording::after {
   content: "";
   position: absolute;
@@ -128,7 +127,6 @@ html, body { margin: 0; padding: 0; }
   100% { box-shadow: 0 0 0 0 rgba(255,82,82,0); }
 }
 
-/* ===== スマホ中央固定 ===== */
 @media screen and (max-width: 600px) {
   #chatbox {
     left: 50%;
@@ -145,7 +143,7 @@ html, body { margin: 0; padding: 0; }
 
 <div id="chatbox">
   <div id="chatHeader">
-    <span class="backBtn" title="公式サイトへ戻る">←</span>
+    <span class="backBtn">←</span>
     <div>
       矢印クリックで公式サイトへ..<br>
       鹿嶋パークホテルQ&Aチャットです<br>
@@ -163,29 +161,29 @@ html, body { margin: 0; padding: 0; }
 </div>
 
 <script>
-document.querySelector(".backBtn").onclick = ()=>{
-  window.location.href = "https://www.kashimaparkhotel.com/";
+document.querySelector(".backBtn").onclick=()=>{
+  location.href="https://www.kashimaparkhotel.com/";
 };
 
 const faq=[
  {
   keywords:["チェックイン","ちぇっくいん","チェックイン時間"],
-  answer:`チェックイン時間は宿泊当日15:00〜です。早めのチェックインをご希望の際は有償によるご対応が可能です。フロントスタッフまたは、事前に 0297-72-1123 までお問合わせください。お待ちいただく際にはウエルカムドリンクコーナーもございますのでご利用ください。`
+  answer:"チェックイン時間は宿泊当日15:00〜です。"
  },
  {
-  keywords:["チェックアウト","ちぇっくあうと","チェックアウト時間","オーバーチャージ","遅め","遅く","レイト","超過","延長"],
-  answer:`チェックアウト時間は翌朝10:00です。（プランにより異なる場合がございます）有償によるご対応も可能です。フロントスタッフまたは、事前に 0297-72-1123 までお問合わせください。`
+  keywords:["チェックアウト","ちぇっくあうと","チェックアウト時間"],
+  answer:"チェックアウト時間は翌朝10:00です。"
  }
 ];
 
-function findAnswer(query){
-  query=query.toLowerCase();
-  for(const item of faq){
-    for(const kw of item.keywords){
-      if(query.includes(kw)) return item.answer;
+function findAnswer(q){
+  q=q.toLowerCase();
+  for(const f of faq){
+    for(const k of f.keywords){
+      if(q.includes(k)) return f.answer;
     }
   }
-  return "申し訳ありません。その質問にはまだ対応していません。0299-90-0500までお問い合わせください。";
+  return "申し訳ありません。その質問にはまだ対応していません。";
 }
 
 const messages=document.getElementById("messages");
@@ -198,19 +196,19 @@ function addBotMessageTypewriter(text){
   div.className="msg bot";
   messages.appendChild(div);
   let i=0;
-  const timer=setInterval(()=>{
+  const t=setInterval(()=>{
     div.textContent+=text.charAt(i++);
     messages.scrollTop=messages.scrollHeight;
-    if(i>=text.length) clearInterval(timer);
+    if(i>=text.length) clearInterval(t);
   },25);
 }
 
 function addMessage(msg,isUser=false){
   if(isUser){
-    const div=document.createElement("div");
-    div.className="msg user";
-    div.textContent=msg;
-    messages.appendChild(div);
+    const d=document.createElement("div");
+    d.className="msg user";
+    d.textContent=msg;
+    messages.appendChild(d);
     messages.scrollTop=messages.scrollHeight;
   }else{
     addBotMessageTypewriter(msg);
@@ -232,32 +230,13 @@ userInput.addEventListener("keydown",e=>{
   }
 });
 
-const placeholders=[
-  "ご質問を入力ください",
-  "音声入力はマイクをPush！",
-  "チェックイン時の不明点や、",
-  "駐車場、食事などお尋ねください",
-  "お電話なら0299-90-0500まで.."
-];
-let phIndex=0;
-setInterval(()=>{
-  userInput.placeholder=placeholders[phIndex];
-  phIndex=(phIndex+1)%placeholders.length;
-},3000);
-
-/* ===== 音声入力 ===== */
-micBtn.addEventListener("click",startSpeech);
-micBtn.addEventListener("touchstart",startSpeech,{passive:false});
-
-function startSpeech(e){
-  e.preventDefault();
+/* ===== 音声入力（スマホ安定版） ===== */
+let recognition=null;
+if(window.SpeechRecognition||window.webkitSpeechRecognition){
   const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-  if(!SR){
-    alert("このブラウザでは音声入力に対応していません。");
-    return;
-  }
-  const recognition=new SR();
+  recognition=new SR();
   recognition.lang="ja-JP";
+
   recognition.onstart=()=>{
     micBtn.classList.add("recording");
     micBtn.textContent="●";
@@ -270,16 +249,23 @@ function startSpeech(e){
     userInput.value=e.results[0][0].transcript;
     sendBtn.click();
   };
-  try{recognition.start();}catch(err){}
 }
 
-/* ===== 無操作3分でホームへ ===== */
+micBtn.onclick=()=>{
+  if(!recognition){
+    alert("このブラウザでは音声入力に対応していません。");
+    return;
+  }
+  try{recognition.start();}catch(e){}
+};
+
+/* ===== 無操作3分 ===== */
 const AUTO_CLOSE_TIME=180000;
 let autoTimer=null;
 function resetTimer(){
   clearTimeout(autoTimer);
   autoTimer=setTimeout(()=>{
-    window.location.href="https://www.kashimaparkhotel.com/";
+    location.href="https://www.kashimaparkhotel.com/";
   },AUTO_CLOSE_TIME);
 }
 ["click","keydown","touchstart","mousemove","scroll"].forEach(e=>{
