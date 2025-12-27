@@ -48,8 +48,11 @@ html, body { margin: 0; padding: 0; }
   overflow-y: auto;
   padding: 10px;
   background: #fafafa;
+  display: flex;
+  flex-direction: column;
 }
 
+/* ★ 回答枠を拡張（最小修正） */
 .msg {
   margin: 6px 0;
   padding: 8px 10px;
@@ -158,22 +161,19 @@ html, body { margin: 0; padding: 0; }
 document.querySelector(".backBtn").onclick = ()=>{
   window.location.href = "https://www.kashimaparkhotel.com/";
 };
-  
-/* ===== FAQ（例：ここに全文入れてOK） ===== */
+
+/* ===== FAQ ===== */
 const faq=[
  {
 keywords:["チェックイン","ちぇっくいん","チェックイン時間"],
 answer:`チェックイン時間は宿泊当日15:00〜です。早めのチェックインをご希望の際は有償によるご対応が可能です。フロントスタッフまたは、事前に 0297-72-1123 までお問合わせください。お待ちいただく際にはウエルカムドリンクコーナーもございますのでご利用ください。`
 },
-
 {
 keywords:["チェックアウト","ちぇっくあうと","チェックアウト時間","オーバーチャージ","遅め","遅く","レイト","超過","延長"],
 answer:`チェックアウト時間は翌朝10:00です。（プランにより異なる場合がございます）有償によるご対応も可能です。フロントスタッフまたは、事前に 0297-72-1123 までお問合わせください。`
 }
-
 ];
 
-/* ===== QAロジック ===== */
 function findAnswer(query){
   query = query.toLowerCase();
   for(const item of faq){
@@ -184,13 +184,11 @@ function findAnswer(query){
   return "申し訳ありません。その質問にはまだ対応していません。0299-90-0500までお問い合わせください。";
 }
 
-/* ===== DOM ===== */
 const messages = document.getElementById("messages");
 const userInput = document.getElementById("userInput");
 const sendBtn = document.getElementById("sendBtn");
 const micBtn = document.getElementById("micBtn");
 
-/* ===== タイプライター表示 ===== */
 function addBotMessageTypewriter(text){
   const div = document.createElement("div");
   div.className = "msg bot";
@@ -204,7 +202,6 @@ function addBotMessageTypewriter(text){
   }, 25);
 }
 
-/* ===== メッセージ表示 ===== */
 function addMessage(msg,isUser=false){
   if(isUser){
     const div=document.createElement("div");
@@ -217,7 +214,6 @@ function addMessage(msg,isUser=false){
   }
 }
 
-/* ===== 送信 ===== */
 sendBtn.onclick=()=>{
   const msg=userInput.value.trim();
   if(!msg)return;
@@ -226,7 +222,6 @@ sendBtn.onclick=()=>{
   userInput.value="";
 };
 
-/* ===== Enterキー送信 ===== */
 userInput.addEventListener("keydown", e => {
   if (e.key === "Enter") {
     e.preventDefault();
@@ -234,7 +229,6 @@ userInput.addEventListener("keydown", e => {
   }
 });
 
-/* ===== プレースホルダー回転 ===== */
 const placeholders=[
   "ご質問を入力ください",
   "音声入力はマイクをPush！",
@@ -248,9 +242,7 @@ setInterval(()=>{
   phIndex=(phIndex+1)%placeholders.length;
 },3000);
 
-/* ===== 音声入力 ===== */
 let recognition=null;
-
 if(window.SpeechRecognition||window.webkitSpeechRecognition){
   const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
   recognition=new SR();
@@ -260,17 +252,14 @@ if(window.SpeechRecognition||window.webkitSpeechRecognition){
     micBtn.classList.add("recording");
     micBtn.textContent="●";
   };
-
   recognition.onend=()=>{
     micBtn.classList.remove("recording");
     micBtn.textContent="🎤";
   };
-
   recognition.onerror=()=>{
     micBtn.classList.remove("recording");
     micBtn.textContent="🎤";
   };
-
   recognition.onresult=e=>{
     userInput.value=e.results[0][0].transcript;
     sendBtn.click();
@@ -285,17 +274,14 @@ micBtn.onclick=()=>{
   }
 };
 
-/* ===== 無操作3分でホームへ ===== */
 const AUTO_CLOSE_TIME=180000;
 let autoTimer=null;
-
 function resetTimer(){
   clearTimeout(autoTimer);
   autoTimer=setTimeout(()=>{
     window.location.href="https://www.kashimaparkhotel.com/";
   },AUTO_CLOSE_TIME);
 }
-
 ["click","keydown","touchstart","mousemove","scroll"].forEach(e=>{
   document.addEventListener(e,resetTimer,{passive:true});
 });
