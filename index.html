@@ -59,8 +59,17 @@ html, body { margin: 0; padding: 0; }
   font-size: 14px;
 }
 
-.user { background: #d1f0d1; align-self: flex-end; }
-.bot  { background: #f0f0f0; align-self: flex-start; }
+.user {
+  background: #d1f0d1;
+  align-self: flex-end;
+}
+
+/* ★ここだけ修正（確実に中央） */
+.bot {
+  background: #f0f0f0;
+  margin-left: auto;
+  margin-right: auto;
+}
 
 #inputArea {
   display: flex;
@@ -236,22 +245,19 @@ setInterval(()=>{
   phIndex=(phIndex+1)%placeholders.length;
 },3000);
 
-/* ===== 音声入力（スマホ対応修正点） ===== */
+/* ===== 音声入力 ===== */
 micBtn.addEventListener("click",startSpeech);
 micBtn.addEventListener("touchstart",startSpeech,{passive:false});
 
 function startSpeech(e){
   e.preventDefault();
-
-  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
   if(!SR){
     alert("このブラウザでは音声入力に対応していません。");
     return;
   }
-
-  const recognition = new SR();
+  const recognition=new SR();
   recognition.lang="ja-JP";
-
   recognition.onstart=()=>{
     micBtn.classList.add("recording");
     micBtn.textContent="●";
@@ -264,11 +270,10 @@ function startSpeech(e){
     userInput.value=e.results[0][0].transcript;
     sendBtn.click();
   };
-
-  try{ recognition.start(); }catch(err){}
+  try{recognition.start();}catch(err){}
 }
 
-/* ===== 自動クローズ ===== */
+/* ===== 無操作3分でホームへ ===== */
 const AUTO_CLOSE_TIME=180000;
 let autoTimer=null;
 function resetTimer(){
