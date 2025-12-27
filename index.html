@@ -54,7 +54,7 @@ html, body { margin: 0; padding: 0; }
   margin: 6px 0;
   padding: 8px 10px;
   border-radius: 10px;
-  max-width: 100%; /* ← ★QAアンサー欄の幅のみ変更 */
+  max-width: 95%;
   word-wrap: break-word;
   font-size: 14px;
 }
@@ -236,10 +236,20 @@ setInterval(()=>{
   phIndex=(phIndex+1)%placeholders.length;
 },3000);
 
-let recognition=null;
-if(window.SpeechRecognition||window.webkitSpeechRecognition){
-  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-  recognition=new SR();
+/* ===== 音声入力（スマホ対応修正点） ===== */
+micBtn.addEventListener("click",startSpeech);
+micBtn.addEventListener("touchstart",startSpeech,{passive:false});
+
+function startSpeech(e){
+  e.preventDefault();
+
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if(!SR){
+    alert("このブラウザでは音声入力に対応していません。");
+    return;
+  }
+
+  const recognition = new SR();
   recognition.lang="ja-JP";
 
   recognition.onstart=()=>{
@@ -254,12 +264,11 @@ if(window.SpeechRecognition||window.webkitSpeechRecognition){
     userInput.value=e.results[0][0].transcript;
     sendBtn.click();
   };
+
+  try{ recognition.start(); }catch(err){}
 }
 
-micBtn.onclick=()=>{
-  recognition ? recognition.start() : alert("このブラウザでは音声入力に対応していません。");
-};
-
+/* ===== 自動クローズ ===== */
 const AUTO_CLOSE_TIME=180000;
 let autoTimer=null;
 function resetTimer(){
