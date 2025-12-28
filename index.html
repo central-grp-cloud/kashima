@@ -266,7 +266,8 @@ setInterval(()=>{
 },3000);
 
 /* ===== ★ 音声入力修正済み（PC・スマホ対応） ===== */
-let recognition=null;
+let recognition = null;
+let isRecording = false;
 
 if(window.SpeechRecognition || window.webkitSpeechRecognition){
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -274,16 +275,19 @@ if(window.SpeechRecognition || window.webkitSpeechRecognition){
   recognition.lang = "ja-JP";
 
   recognition.onstart = ()=>{
+    isRecording = true;
     micBtn.classList.add("recording");
     micBtn.textContent = "●";
   };
 
   recognition.onend = ()=>{
+    isRecording = false;
     micBtn.classList.remove("recording");
     micBtn.textContent = "🎤";
   };
 
   recognition.onerror = ()=>{
+    isRecording = false;
     micBtn.classList.remove("recording");
     micBtn.textContent = "🎤";
   };
@@ -292,6 +296,21 @@ if(window.SpeechRecognition || window.webkitSpeechRecognition){
     userInput.value = e.results[0][0].transcript;
     sendBtn.click();
   };
+}
+
+micBtn.onclick = ()=>{
+  if(!recognition) {
+    alert("このブラウザでは音声入力に対応していません。");
+    return;
+  }
+
+  if(isRecording) return; // ★録音中は無視
+
+  try{
+    recognition.start();  // ★ start は録音中でなければ呼ぶ
+  }catch(e){
+    // 例外は無視（ブラウザ依存）
+  }
 }
 
 // ★ 変更点：onclick 内で start() を直接呼ぶだけ
