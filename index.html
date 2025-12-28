@@ -60,11 +60,7 @@ html, body { margin: 0; padding: 0; }
 }
 
 .user { background: #d1f0d1; align-self: flex-end; }
-.bot  {
-  background: #f0f0f0;
-  margin-left: auto;
-  margin-right: auto;
-}
+.bot  { background: #f0f0f0; margin-left: auto; margin-right: auto; }
 
 #inputArea {
   display: flex;
@@ -99,14 +95,13 @@ html, body { margin: 0; padding: 0; }
   flex-shrink: 0;
 }
 
-/* ===== 録音中：色のみ変更 ===== */
+/* ===== 録音中 ===== */
 #micBtn.recording {
   background: #0078d7;
   color: #ff5252;
   position: relative;
 }
 
-/* ===== 赤丸 外側パルス（タップ非干渉） ===== */
 #micBtn.recording::after {
   content: "";
   position: absolute;
@@ -163,14 +158,10 @@ document.querySelector(".backBtn").onclick = ()=>{
 };
 
 const faq=[
- {
-  keywords:["チェックイン","ちぇっくいん","チェックイン時間"],
-  answer:`チェックイン時間は宿泊当日15:00〜です。早めのチェックインをご希望の際は有償によるご対応が可能です。フロントスタッフまたは、事前に 0297-72-1123 までお問合わせください。お待ちいただく際にはウエルカムドリンクコーナーもございますのでご利用ください。`
- },
- {
-  keywords:["チェックアウト","ちぇっくあうと","チェックアウト時間","オーバーチャージ","遅め","遅く","レイト","超過","延長"],
-  answer:`チェックアウト時間は翌朝10:00です。（プランにより異なる場合がございます）有償によるご対応も可能です。フロントスタッフまたは、事前に 0297-72-1123 までお問合わせください。`
- }
+ { keywords:["チェックイン","ちぇっくいん","チェックイン時間"],
+   answer:`チェックイン時間は宿泊当日15:00〜です。早めのチェックインをご希望の際は有償によるご対応が可能です。フロントスタッフまたは、事前に 0297-72-1123 までお問合わせください。お待ちいただく際にはウエルカムドリンクコーナーもございますのでご利用ください。` },
+ { keywords:["チェックアウト","ちぇっくあうと","チェックアウト時間","オーバーチャージ","遅め","遅く","レイト","超過","延長"],
+   answer:`チェックアウト時間は翌朝10:00です。（プランにより異なる場合がございます）有償によるご対応も可能です。フロントスタッフまたは、事前に 0297-72-1123 までお問合わせください。` }
 ];
 
 function findAnswer(query){
@@ -240,10 +231,15 @@ setInterval(()=>{
   phIndex=(phIndex+1)%placeholders.length;
 },3000);
 
-/* ===== 音声入力（Edge 無反応対策） ===== */
-micBtn.addEventListener("click",startSpeech);
+/* ===== 音声入力（最小修正） ===== */
+let recognizing=false;                         // ★変更
+micBtn.addEventListener("click",startSpeech);  // ★変更
+micBtn.addEventListener("touchstart",startSpeech,{passive:false}); // ★変更
 
 function startSpeech(e){
+  e.preventDefault();                           // ★変更
+  if(recognizing) return;                      // ★変更
+
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   if(!SR){
     alert("このブラウザでは音声入力に対応していません。");
@@ -252,19 +248,26 @@ function startSpeech(e){
 
   const recognition = new SR();
   recognition.lang="ja-JP";
+  recognition.continuous=false;                // ★変更
+  recognition.interimResults=false;            // ★変更
 
   recognition.onstart=()=>{
+    recognizing=true;                          // ★変更
     micBtn.classList.add("recording");
     micBtn.textContent="●";
   };
 
-  recognition.onerror=(ev)=>{
+  recognition.onerror=(ev)=>{                  // ★変更
+    recognizing=false;
     micBtn.classList.remove("recording");
     micBtn.textContent="🎤";
-    alert("PCにマイクが無い、またはマイク使用が許可されていません。");
+    if(ev.error==="not-allowed"||ev.error==="service-not-allowed"){
+      alert("マイクの使用が許可されていません。");
+    }
   };
 
-  recognition.onend=()=>{
+  recognition.onend=()=>{                      // ★変更
+    recognizing=false;
     micBtn.classList.remove("recording");
     micBtn.textContent="🎤";
   };
@@ -274,11 +277,7 @@ function startSpeech(e){
     sendBtn.click();
   };
 
-  try{
-    recognition.start();
-  }catch(err){
-    alert("音声入力を開始できませんでした。");
-  }
+  try{ recognition.start(); }catch(err){}
 }
 
 /* ===== 自動クローズ ===== */
@@ -290,7 +289,7 @@ function resetTimer(){
     window.location.href="https://www.kashimaparkhotel.com/";
   },AUTO_CLOSE_TIME);
 }
-["click","keydown","mousemove","scroll"].forEach(e=>{
+["click","keydown","touchstart","mousemove","scroll"].forEach(e=>{
   document.addEventListener(e,resetTimer,{passive:true});
 });
 resetTimer();
@@ -298,3 +297,4 @@ resetTimer();
 
 </body>
 </html>
+
