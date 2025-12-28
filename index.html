@@ -240,12 +240,15 @@ setInterval(()=>{
   phIndex=(phIndex+1)%placeholders.length;
 },3000);
 
-/* ===== 音声入力（スマホ対応修正点） ===== */
+/* ===== 音声入力（PC Edge 対応修正） ===== */
 micBtn.addEventListener("click",startSpeech);
-micBtn.addEventListener("touchstart",startSpeech,{passive:false});
+
+if ("ontouchstart" in window) {
+  micBtn.addEventListener("touchstart",startSpeech,{passive:false});
+}
 
 function startSpeech(e){
-  e.preventDefault();
+  if(e.type === "touchstart") e.preventDefault();
 
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   if(!SR){
