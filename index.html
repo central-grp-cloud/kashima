@@ -273,6 +273,7 @@ if(window.SpeechRecognition || window.webkitSpeechRecognition){
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   recognition = new SR();
   recognition.lang = "ja-JP";
+  recognition.interimResults = false;
 
   recognition.onstart = ()=>{
     micBtn.classList.add("recording");
@@ -303,26 +304,13 @@ micBtn.onclick = ()=>{
     return;
   }
 
-  if(isRecording) return; // 録音中は無視
+  if(isRecording) return;
 
-  isRecording = true;     // ★ start 前に必ず立てる
+  isRecording = true;
   try{
     recognition.start();
   }catch(e){
     isRecording = false;
-  }
-}
-
-// ★ 変更点：onclick 内で start() を直接呼ぶだけ
-micBtn.onclick = ()=>{
-  if(!recognition){
-    alert("このブラウザでは音声入力に対応していません。");
-    return;
-  }
-  try{
-    recognition.start();
-  }catch(e){
-    // 連続タップ時の例外を無視
   }
 };
 
