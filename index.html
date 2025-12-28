@@ -265,17 +265,18 @@ setInterval(()=>{
   phIndex=(phIndex+1)%placeholders.length;
 },3000);
 
-/* ===== ★ 音声入力修正済み（PC・スマホ対応） ===== */
+/* ===== ★ 音声入力（Chrome/Android/iOS Safari対応） ===== */
 let recognition = null;
 let isRecording = false;
 
-if(window.SpeechRecognition || window.webkitSpeechRecognition){
+if('SpeechRecognition' in window || 'webkitSpeechRecognition' in window){
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   recognition = new SR();
   recognition.lang = "ja-JP";
   recognition.interimResults = false;
 
   recognition.onstart = ()=>{
+    isRecording = true;
     micBtn.classList.add("recording");
     micBtn.textContent = "●";
   };
@@ -298,19 +299,20 @@ if(window.SpeechRecognition || window.webkitSpeechRecognition){
   };
 }
 
+// ★ マイクボタン押下時
 micBtn.onclick = ()=>{
-  if(!recognition) {
+  if(!recognition){
     alert("このブラウザでは音声入力に対応していません。");
     return;
   }
 
-  if(isRecording) return;
+  if(isRecording) return; // 録音中は無視
 
-  isRecording = true;
   try{
     recognition.start();
   }catch(e){
-    isRecording = false;
+    isRecording = false; // start 失敗時にフラグ戻す
+    console.log("音声認識 start 失敗", e);
   }
 };
 
@@ -329,7 +331,8 @@ function resetTimer(){
   document.addEventListener(e,resetTimer,{passive:true});
 });
 resetTimer();
-
+</script>
+  
 </body>
 </html>
   
