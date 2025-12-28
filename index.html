@@ -1,3 +1,4 @@
+・完全コード（全文）
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -46,7 +47,7 @@ html, body { margin: 0; padding: 0; }
 #messages {
   flex: 1;
   overflow-y: auto;
-  padding: 10px;
+  padding: 16px;
   background: #fafafa;
 }
 
@@ -59,8 +60,17 @@ html, body { margin: 0; padding: 0; }
   font-size: 14px;
 }
 
-.user { background: #d1f0d1; align-self: flex-end; }
-.bot  { background: #f0f0f0; margin-left: auto; margin-right: auto; }
+.user {
+  background: #d1f0d1;
+  align-self: flex-end;
+  max-width: 80%;
+}
+
+.bot  {
+  background: #f0f0f0;
+  align-self: flex-start;
+  max-width: 95%;
+}
 
 #inputArea {
   display: flex;
@@ -95,13 +105,14 @@ html, body { margin: 0; padding: 0; }
   flex-shrink: 0;
 }
 
-/* ===== 録音中 ===== */
+/* ===== 録音中：色のみ変更 ===== */
 #micBtn.recording {
   background: #0078d7;
   color: #ff5252;
   position: relative;
 }
 
+/* ===== 赤丸 外側パルス（タップ非干渉） ===== */
 #micBtn.recording::after {
   content: "";
   position: absolute;
@@ -146,13 +157,14 @@ html, body { margin: 0; padding: 0; }
   <div id="messages"></div>
 
   <div id="inputArea">
-    <input id="userInput" placeholder="">
+    <input id="userInput" placeholder="ご質問をどうぞ…">
     <button id="micBtn">🎤</button>
     <button id="sendBtn">送信</button>
   </div>
 </div>
 
 <script>
+/* ===== 戻る ===== */
 document.querySelector(".backBtn").onclick = ()=>{
   window.location.href = "https://www.kashimaparkhotel.com/";
 };
@@ -164,8 +176,9 @@ const faq=[
    answer:`チェックアウト時間は翌朝10:00です。（プランにより異なる場合がございます）有償によるご対応も可能です。フロントスタッフまたは、事前に 0297-72-1123 までお問合わせください。` }
 ];
 
+/* ===== QAロジック ===== */
 function findAnswer(query){
-  query=query.toLowerCase();
+  query = query.toLowerCase();
   for(const item of faq){
     for(const kw of item.keywords){
       if(query.includes(kw)) return item.answer;
@@ -174,23 +187,27 @@ function findAnswer(query){
   return "申し訳ありません。その質問にはまだ対応していません。0299-90-0500までお問い合わせください。";
 }
 
-const messages=document.getElementById("messages");
-const userInput=document.getElementById("userInput");
-const sendBtn=document.getElementById("sendBtn");
-const micBtn=document.getElementById("micBtn");
+/* ===== DOM ===== */
+const messages = document.getElementById("messages");
+const userInput = document.getElementById("userInput");
+const sendBtn = document.getElementById("sendBtn");
+const micBtn = document.getElementById("micBtn");
 
+/* ===== タイプライター表示 ===== */
 function addBotMessageTypewriter(text){
-  const div=document.createElement("div");
-  div.className="msg bot";
+  const div = document.createElement("div");
+  div.className = "msg bot";
   messages.appendChild(div);
-  let i=0;
-  const timer=setInterval(()=>{
-    div.textContent+=text.charAt(i++);
-    messages.scrollTop=messages.scrollHeight;
-    if(i>=text.length) clearInterval(timer);
-  },25);
+  let i = 0;
+  const timer = setInterval(()=>{
+    div.textContent += text.charAt(i);
+    i++;
+    messages.scrollTop = messages.scrollHeight;
+    if(i >= text.length) clearInterval(timer);
+  }, 25);
 }
 
+/* ===== メッセージ表示 ===== */
 function addMessage(msg,isUser=false){
   if(isUser){
     const div=document.createElement("div");
@@ -203,6 +220,7 @@ function addMessage(msg,isUser=false){
   }
 }
 
+/* ===== 送信 ===== */
 sendBtn.onclick=()=>{
   const msg=userInput.value.trim();
   if(!msg)return;
@@ -211,63 +229,33 @@ sendBtn.onclick=()=>{
   userInput.value="";
 };
 
-userInput.addEventListener("keydown",e=>{
-  if(e.key==="Enter"){
+/* ===== Enterキー送信（PC） ===== */
+userInput.addEventListener("keydown", e => {
+  if (e.key === "Enter") {
     e.preventDefault();
     sendBtn.click();
   }
 });
 
-const placeholders=[
-  "ご質問を入力ください",
-  "音声入力はマイクをPush！",
-  "チェックイン時の不明点や、",
-  "駐車場、食事などお尋ねください",
-  "お電話なら0299-90-0500まで.."
-];
-let phIndex=0;
-setInterval(()=>{
-  userInput.placeholder=placeholders[phIndex];
-  phIndex=(phIndex+1)%placeholders.length;
-},3000);
+/* ===== 音声入力 ===== */
+let recognition=null;
 
-/* ===== 音声入力（最小修正） ===== */
-let recognizing=false;                         // ★変更
-micBtn.addEventListener("click",startSpeech);  // ★変更
-micBtn.addEventListener("touchstart",startSpeech,{passive:false}); // ★変更
-
-function startSpeech(e){
-  e.preventDefault();                           // ★変更
-  if(recognizing) return;                      // ★変更
-
-  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if(!SR){
-    alert("このブラウザでは音声入力に対応していません。");
-    return;
-  }
-
-  const recognition = new SR();
+if(window.SpeechRecognition||window.webkitSpeechRecognition){
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  recognition=new SR();
   recognition.lang="ja-JP";
-  recognition.continuous=false;                // ★変更
-  recognition.interimResults=false;            // ★変更
 
   recognition.onstart=()=>{
-    recognizing=true;                          // ★変更
     micBtn.classList.add("recording");
     micBtn.textContent="●";
   };
 
-  recognition.onerror=(ev)=>{                  // ★変更
-    recognizing=false;
+  recognition.onend=()=>{
     micBtn.classList.remove("recording");
     micBtn.textContent="🎤";
-    if(ev.error==="not-allowed"||ev.error==="service-not-allowed"){
-      alert("マイクの使用が許可されていません。");
-    }
   };
 
-  recognition.onend=()=>{                      // ★変更
-    recognizing=false;
+  recognition.onerror=()=>{
     micBtn.classList.remove("recording");
     micBtn.textContent="🎤";
   };
@@ -276,25 +264,16 @@ function startSpeech(e){
     userInput.value=e.results[0][0].transcript;
     sendBtn.click();
   };
-
-  try{ recognition.start(); }catch(err){}
 }
 
-/* ===== 自動クローズ ===== */
-const AUTO_CLOSE_TIME=180000;
-let autoTimer=null;
-function resetTimer(){
-  clearTimeout(autoTimer);
-  autoTimer=setTimeout(()=>{
-    window.location.href="https://www.kashimaparkhotel.com/";
-  },AUTO_CLOSE_TIME);
-}
-["click","keydown","touchstart","mousemove","scroll"].forEach(e=>{
-  document.addEventListener(e,resetTimer,{passive:true});
-});
-resetTimer();
+micBtn.onclick=()=>{
+  if(recognition){
+    recognition.start();
+  }else{
+    alert("このブラウザでは音声入力に対応していません。");
+  }
+};
 </script>
 
 </body>
 </html>
-
