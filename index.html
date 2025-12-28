@@ -249,7 +249,6 @@ userInput.addEventListener("keydown",e=>{
 
 /* ===== ★ 音声入力修復（変更点②：多重start防止） ===== */
 let recognition=null;
-let isRecording=false;
 
 if(window.SpeechRecognition||window.webkitSpeechRecognition){
   const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
@@ -280,10 +279,18 @@ if(window.SpeechRecognition||window.webkitSpeechRecognition){
   };
 }
 
-micBtn.onclick=()=>{
-  if(recognition && !isRecording){
-    recognition.start();
+micBtn.onclick = () => {
+  if (!recognition) {
+    alert("このブラウザでは音声入力に対応していません。");
+    return;
   }
+
+  try {
+    recognition.start();
+  } catch (e) {
+    // 連続タップ時の例外を無視
+  }
+  
 };
 
 /* ===== 無操作3分でホームへ（元コード保持） ===== */
@@ -301,6 +308,9 @@ function resetTimer(){
   document.addEventListener(e,resetTimer,{passive:true});
 });
 resetTimer();
+
+
+
 </script>
 
 </body>
