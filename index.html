@@ -207,19 +207,21 @@ const userInput=document.getElementById("userInput");
 const sendBtn=document.getElementById("sendBtn");
 const micBtn=document.getElementById("micBtn");
 
-/* ===== タイプライター ===== */
+/* ===== タイプライター表示（bot専用） ===== */
 function addBotMessageTypewriter(text){
   const div=document.createElement("div");
   div.className="msg bot";
   messages.appendChild(div);
   let i=0;
   const timer=setInterval(()=>{
-    div.textContent+=text.charAt(i++);
+    div.textContent+=text.charAt(i);
+    i++;
     messages.scrollTop=messages.scrollHeight;
     if(i>=text.length) clearInterval(timer);
-  },25);
+  }, 25);
 }
 
+/* ===== メッセージ表示 ===== */
 function addMessage(msg,isUser=false){
   if(isUser){
     const div=document.createElement("div");
@@ -232,6 +234,7 @@ function addMessage(msg,isUser=false){
   }
 }
 
+/* ===== 送信 ===== */
 sendBtn.onclick=()=>{
   const msg=userInput.value.trim();
   if(!msg)return;
@@ -240,60 +243,71 @@ sendBtn.onclick=()=>{
   userInput.value="";
 };
 
-userInput.addEventListener("keydown",e=>{
-  if(e.key==="Enter"){
+/* ===== Enterキー送信（PC） ===== */
+userInput.addEventListener("keydown", e => {
+  if (e.key === "Enter") {
     e.preventDefault();
     sendBtn.click();
   }
 });
 
-/* ===== ★ 音声入力修復（変更点②：多重start防止） ===== */
+/* ===== プレースホルダー回転 ===== */
+const placeholders=[
+  "ご質問を入力ください",
+  "音声入力はマイクをPush！",
+  "チェックイン時の不明点や、",
+  "駐車場、食事などお尋ねください",
+  "お電話なら0299-90-0500まで.."
+];
+let phIndex=0;
+setInterval(()=>{
+  userInput.placeholder=placeholders[phIndex];
+  phIndex=(phIndex+1)%placeholders.length;
+},3000);
+
+/* ===== ★ 音声入力修正済み（PC・スマホ対応） ===== */
 let recognition=null;
 
-if(window.SpeechRecognition||window.webkitSpeechRecognition){
-  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-  recognition=new SR();
-  recognition.lang="ja-JP";
+if(window.SpeechRecognition || window.webkitSpeechRecognition){
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  recognition = new SR();
+  recognition.lang = "ja-JP";
 
-  recognition.onstart=()=>{
-    isRecording=true;
+  recognition.onstart = ()=>{
     micBtn.classList.add("recording");
-    micBtn.textContent="●";
+    micBtn.textContent = "●";
   };
 
-  recognition.onend=()=>{
-    isRecording=false;
+  recognition.onend = ()=>{
     micBtn.classList.remove("recording");
-    micBtn.textContent="🎤";
+    micBtn.textContent = "🎤";
   };
 
-  recognition.onerror=()=>{
-    isRecording=false;
+  recognition.onerror = ()=>{
     micBtn.classList.remove("recording");
-    micBtn.textContent="🎤";
+    micBtn.textContent = "🎤";
   };
 
-  recognition.onresult=e=>{
-    userInput.value=e.results[0][0].transcript;
+  recognition.onresult = e=>{
+    userInput.value = e.results[0][0].transcript;
     sendBtn.click();
   };
 }
 
-micBtn.onclick = () => {
-  if (!recognition) {
+// ★ 変更点：onclick 内で start() を直接呼ぶだけ
+micBtn.onclick = ()=>{
+  if(!recognition){
     alert("このブラウザでは音声入力に対応していません。");
     return;
   }
-
-  try {
+  try{
     recognition.start();
-  } catch (e) {
+  }catch(e){
     // 連続タップ時の例外を無視
   }
-  
 };
 
-/* ===== 無操作3分でホームへ（元コード保持） ===== */
+/* ===== 無操作3分でホームへ ===== */
 const AUTO_CLOSE_TIME=180000;
 let autoTimer=null;
 
@@ -309,9 +323,6 @@ function resetTimer(){
 });
 resetTimer();
 
-
-
-</script>
-
 </body>
 </html>
+  
