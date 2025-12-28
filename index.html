@@ -275,7 +275,6 @@ if(window.SpeechRecognition || window.webkitSpeechRecognition){
   recognition.lang = "ja-JP";
 
   recognition.onstart = ()=>{
-    isRecording = true;
     micBtn.classList.add("recording");
     micBtn.textContent = "●";
   };
@@ -304,12 +303,13 @@ micBtn.onclick = ()=>{
     return;
   }
 
-  if(isRecording) return; // ★録音中は無視
+  if(isRecording) return; // 録音中は無視
 
+  isRecording = true;     // ★ start 前に必ず立てる
   try{
-    recognition.start();  // ★ start は録音中でなければ呼ぶ
+    recognition.start();
   }catch(e){
-    // 例外は無視（ブラウザ依存）
+    isRecording = false;
   }
 }
 
