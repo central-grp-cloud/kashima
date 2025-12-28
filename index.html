@@ -217,6 +217,12 @@ micBtn.onclick=()=>{
   } catch (e) {}
 };
 
+/* ===== iOS Safari 対策：touchstart ===== */
+micBtn.addEventListener("touchstart", e => {
+  e.preventDefault();
+  micBtn.onclick();
+}, { passive: false });
+
 /* ===== 無操作3分でホームへ ===== */
 const AUTO_CLOSE_TIME=180000;
 let autoTimer=null;
