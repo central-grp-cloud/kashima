@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>セントラルホテルグループQ&Aチャット</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>セントラルホテルグループQ&Aチャット</title>
 
 <style>
 *, *::before, *::after { box-sizing: border-box; }
-html, body { margin:0; padding:0; }
+html, body { margin: 0; padding: 0; }
 
 /* ===== 共通 ===== */
 #chatbox {
@@ -52,11 +52,13 @@ html, body { margin:0; padding:0; }
 
 .msg {
   margin: 6px 0;
-  padding: 8px 10px;
+  padding: 10px 12px;
   border-radius: 10px;
-  max-width: 95%;
+  max-width: 95%;              /* ← 回答幅を拡張 */
   word-wrap: break-word;
   font-size: 14px;
+  line-height: 1.6;            /* ← 読みやすさ微調整 */
+  text-align: left;            /* ← 左寄せ明示 */
 }
 
 .user {
@@ -64,14 +66,9 @@ html, body { margin:0; padding:0; }
   align-self: flex-end;
 }
 
-/* ===== QA回答 微調整（左寄り＋可読性） ===== */
 .bot {
   background: #f0f0f0;
   align-self: flex-start;
-  margin-right: auto;
-  line-height: 1.6;
-  padding: 10px 14px;
-  max-width: 100%;
 }
 
 #inputArea {
@@ -89,7 +86,7 @@ html, body { margin:0; padding:0; }
   font-size: 14px;
 }
 
-/* ===== ボタン ===== */
+/* ===== ボタンサイズ固定 ===== */
 #micBtn,
 #sendBtn {
   width: 44px;
@@ -170,21 +167,20 @@ document.querySelector(".backBtn").onclick = () => {
 
 /* ===== FAQ ===== */
 const faq = [
- {
-  keywords:["チェックイン","ちぇっくいん","チェックイン時間"],
-  answer:`チェックイン時間は宿泊当日15:00〜です。早めのチェックインをご希望の際は有償によるご対応が可能です。フロントスタッフまたは、事前に 0297-72-1123 までお問合わせください。お待ちいただく際にはウエルカムドリンクコーナーもございますのでご利用ください。`
- },
- {
-  keywords:["チェックアウト","ちぇっくあうと","チェックアウト時間","オーバーチャージ","遅め","遅く","レイト","超過","延長"],
-  answer:`チェックアウト時間は翌朝10:00です。（プランにより異なる場合がございます）有償によるご対応も可能です。フロントスタッフまたは、事前に 0297-72-1123 までお問合わせください。`
- },
- {
-  keywords:["掃除","清掃","そうじ","せいそう","時間","始まる","終わる","始め","終了","しない","赤札","白札"],
-  answer:`お掃除は毎朝10：00より開始となります。要・不要に関しましてドア内側にあるプラスティック札を外側にご提示いただく事でお伝えいただく事も可能です。お時間を変更してのお掃除ご依頼は13：00までになります。フロントに直接ご依頼ください。`
- }
+  {
+    keywords: ["チェックイン","ちぇっくいん","チェックイン時間"],
+    answer: `チェックイン時間は宿泊当日15:00〜です。早めのチェックインをご希望の際は有償によるご対応が可能です。フロントスタッフまたは、事前に 0297-72-1123 までお問合わせください。お待ちいただく際にはウエルカムドリンクコーナーもございますのでご利用ください。`
+  },
+  {
+    keywords: ["チェックアウト","ちぇっくあうと","チェックアウト時間","オーバーチャージ","遅め","遅く","レイト","超過","延長"],
+    answer: `チェックアウト時間は翌朝10:00です。（プランにより異なる場合がございます）有償によるご対応も可能です。フロントスタッフまたは、事前に 0297-72-1123 までお問合わせください。`
+  },
+  {
+    keywords: ["掃除","清掃","そうじ","せいそう","時間","始まる","終わる","始め","終了","しない","赤札","白札"],
+    answer: `お掃除は毎朝10：00より開始となります。要・不要に関しましてドア内側にあるプラスティック札を外側にご提示いただく事でお伝えいただく事も可能です。お時間を変更してのお掃除ご依頼は13：00までになります。フロントに直接ご依頼ください。`
+  }
 ];
 
-/* ===== QAロジック ===== */
 function findAnswer(query){
   query = query.toLowerCase();
   for(const item of faq){
@@ -201,7 +197,7 @@ const userInput = document.getElementById("userInput");
 const sendBtn = document.getElementById("sendBtn");
 const micBtn = document.getElementById("micBtn");
 
-/* ===== タイプライター表示 ===== */
+/* ===== タイプライター ===== */
 function addBotMessageTypewriter(text){
   const div = document.createElement("div");
   div.className = "msg bot";
@@ -211,10 +207,9 @@ function addBotMessageTypewriter(text){
     div.textContent += text.charAt(i++);
     messages.scrollTop = messages.scrollHeight;
     if(i >= text.length) clearInterval(timer);
-  },25);
+  }, 25);
 }
 
-/* ===== メッセージ表示 ===== */
 function addMessage(msg, isUser=false){
   if(isUser){
     const div = document.createElement("div");
@@ -222,21 +217,21 @@ function addMessage(msg, isUser=false){
     div.textContent = msg;
     messages.appendChild(div);
     messages.scrollTop = messages.scrollHeight;
-  } else {
+  }else{
     addBotMessageTypewriter(msg);
   }
 }
 
 /* ===== 送信 ===== */
-sendBtn.onclick = ()=>{
+sendBtn.onclick = () => {
   const msg = userInput.value.trim();
   if(!msg) return;
   addMessage(msg, true);
-  setTimeout(()=>addMessage(findAnswer(msg)),100);
+  setTimeout(()=>addMessage(findAnswer(msg)), 100);
   userInput.value = "";
 };
 
-/* ===== Enterキー送信 ===== */
+/* ===== Enter送信 ===== */
 userInput.addEventListener("keydown", e=>{
   if(e.key === "Enter"){
     e.preventDefault();
@@ -244,7 +239,7 @@ userInput.addEventListener("keydown", e=>{
   }
 });
 
-/* ===== プレースホルダー回転 ===== */
+/* ===== プレースホルダー ===== */
 const placeholders = [
   "ご質問を入力ください",
   "音声入力はマイクをPush！",
@@ -256,7 +251,7 @@ let phIndex = 0;
 setInterval(()=>{
   userInput.placeholder = placeholders[phIndex];
   phIndex = (phIndex + 1) % placeholders.length;
-},3000);
+}, 3000);
 
 /* ===== 音声入力 ===== */
 let recognition = null;
@@ -272,12 +267,7 @@ if(window.SpeechRecognition || window.webkitSpeechRecognition){
     micBtn.classList.add("recording");
     micBtn.textContent = "●";
   };
-  recognition.onend = ()=>{
-    isRecording = false;
-    micBtn.classList.remove("recording");
-    micBtn.textContent = "🎤";
-  };
-  recognition.onerror = ()=>{
+  recognition.onend = recognition.onerror = ()=>{
     isRecording = false;
     micBtn.classList.remove("recording");
     micBtn.textContent = "🎤";
@@ -288,35 +278,23 @@ if(window.SpeechRecognition || window.webkitSpeechRecognition){
   };
 }
 
-function startVoice(){
+micBtn.onclick = ()=>{
   const ua = navigator.userAgent;
 
   if(ua.includes("Edg/")){
-    alert(
-      "このブラウザ（Edge）では音声入力は利用できません。\n" +
-      "Chrome または Safari をご利用ください。"
-    );
+    alert("Edgeでは音声入力は利用できません。\nChrome または Safari をご利用ください。");
     return;
   }
-
   if(!recognition){
     alert("このブラウザでは音声入力に対応していません。");
     return;
   }
-
   if(isRecording) return;
 
-  try {
-    recognition.start();
-  } catch(e){}
-}
+  try{ recognition.start(); }catch(e){}
+};
 
-micBtn.addEventListener("pointerdown", e=>{
-  e.preventDefault();
-  startVoice();
-});
-
-/* ===== 無操作3分でホームへ ===== */
+/* ===== 無操作3分 ===== */
 const AUTO_CLOSE_TIME = 180000;
 let autoTimer = null;
 
@@ -327,7 +305,7 @@ function resetTimer(){
   }, AUTO_CLOSE_TIME);
 }
 
-["click","keydown","pointerdown","mousemove","scroll"].forEach(ev=>{
+["click","keydown","mousemove","scroll"].forEach(ev=>{
   document.addEventListener(ev, resetTimer, { passive:true });
 });
 resetTimer();
