@@ -285,7 +285,7 @@ function startVoice(){
 
 micBtn.onclick = startVoice;
 
-/* ★ スマホ安定化：ユーザー操作として認識させる */
+/* 音声入力安定化 */
 micBtn.addEventListener("pointerdown", e=>{
   e.preventDefault();
   startVoice();
