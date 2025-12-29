@@ -6,59 +6,8 @@
   <title>セントラルホテルグループQ&Aチャット</title>
 
 <style>
-/* ===============================
-   背景レイヤー（公式ページ再構築）
-================================ */
 *, *::before, *::after { box-sizing: border-box; }
-
-html, body {
-  margin: 0;
-  padding: 0;
-  height: 100%;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-}
-
-/* 背景（公式ページ風） */
-#bg-layer {
-  position: fixed;
-  inset: 0;
-  overflow-y: auto;
-  background: #ffffff;
-  z-index: 0;
-  pointer-events: none; /* マスク化：背景は操作不可 */
-}
-
-.site-header {
-  background: #2e7d32;
-  color: #fff;
-  padding: 16px;
-}
-
-.site-main {
-  padding: 16px;
-  line-height: 1.8;
-}
-
-.site-footer {
-  padding: 16px;
-  background: #f0f0f0;
-  font-size: 12px;
-}
-
-/* ===============================
-   チャット前面マスク
-================================ */
-#chat-layer {
-  position: fixed;
-  inset: 0;
-  z-index: 9999;
-  background: rgba(255,255,255,0.65);
-  backdrop-filter: blur(4px);
-}
-
-/* ===============================
-   ↓↓↓ ここから下は元のチャットCSS（変更なし） ↓↓↓
-================================ */
+html, body { margin: 0; padding: 0; }
 
 #chatbox {
   width: 360px;
@@ -75,6 +24,7 @@ html, body {
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  z-index: 9999;
 }
 
 #chatHeader {
@@ -110,15 +60,8 @@ html, body {
   text-align: left;
 }
 
-.user {
-  background: #d1f0d1;
-  align-self: flex-end;
-}
-
-.bot {
-  background: #f0f0f0;
-  align-self: flex-start;
-}
+.user { background: #d1f0d1; align-self: flex-end; }
+.bot  { background: #f0f0f0; align-self: flex-start; }
 
 #inputArea {
   display: flex;
@@ -139,7 +82,6 @@ html, body {
 #sendBtn {
   width: 44px;
   height: 44px;
-  padding: 0;
   border: none;
   border-radius: 8px;
   background: #0078d7;
@@ -179,7 +121,6 @@ html, body {
     right: auto;
     transform: translateX(-50%);
     width: calc(100vw - 20px);
-    max-width: calc(100vw - 20px);
   }
 }
 </style>
@@ -187,32 +128,9 @@ html, body {
 
 <body>
 
-<!-- ===== 背景（公式ページ再構築） ===== -->
-<div id="bg-layer">
-  <header class="site-header">
-    <h1>鹿嶋パークホテル</h1>
-  </header>
-
-  <main class="site-main">
-    <h2>ご案内</h2>
-    <p>チェックイン 15:00 / チェックアウト 10:00</p>
-    <p>無料駐車場・館内Wi-Fi完備</p>
-
-    <h2>アクセス</h2>
-    <p>鹿島神宮駅より車で約10分</p>
-  </main>
-
-  <footer class="site-footer">
-    © Kashima Park Hotel
-  </footer>
-</div>
-
-<!-- ===== チャット（元コードそのまま） ===== -->
-<div id="chat-layer">
-
 <div id="chatbox">
   <div id="chatHeader">
-    <span class="backBtn" title="公式サイトへ戻る">←</span>
+    <span class="backBtn">←</span>
     <div>
       矢印クリックで公式サイトへ..<br>
       鹿嶋パークホテルQ&Aチャットです<br>
@@ -229,161 +147,122 @@ html, body {
   </div>
 </div>
 
-</div>
-
 <script>
-/* ======== ここからJS全文（変更なし） ======== */
-
-document.querySelector(".backBtn").onclick = () => {
-  window.location.href = "https://www.kashimaparkhotel.com/";
+document.querySelector(".backBtn").onclick = ()=>{
+  window.location.href="https://www.kashimaparkhotel.com/";
 };
 
 const faq = [
   {
-    keywords: ["チェックイン","ちぇっくいん","チェックイン時間"],
-    answer: `チェックイン時間は宿泊当日15:00〜です。早めのチェックインをご希望の際は有償によるご対応が可能です。フロントスタッフまたは、事前に 0297-72-1123 までお問合わせください。お待ちいただく際にはウエルカムドリンクコーナーもございますのでご利用ください。`
+    keywords:["チェックイン","ちぇっくいん","チェックイン時間"],
+    answer:`チェックイン時間は宿泊当日15:00〜です。早めのチェックインをご希望の際は有償によるご対応が可能です。フロントスタッフまたは、事前に 0297-72-1123 までお問合わせください。お待ちいただく際にはウエルカムドリンクコーナーもございます。`
   },
   {
-    keywords: ["チェックアウト","ちぇっくあうと","チェックアウト時間","オーバーチャージ","遅め","遅く","レイト","超過","延長"],
-    answer: `チェックアウト時間は翌朝10:00です。（プランにより異なる場合がございます）有償によるご対応も可能です。フロントスタッフまたは、事前に 0297-72-1123 までお問合わせください。`
+    keywords:["チェックアウト","ちぇっくあうと","チェックアウト時間","延長"],
+    answer:`チェックアウト時間は翌朝10:00です。有償によるご対応も可能です。`
   },
   {
-    keywords: ["掃除","清掃","そうじ","せいそう","時間","始まる","終わる","始め","終了","しない","赤札","白札"],
-    answer: `お掃除は毎朝10：00より開始となります。要・不要に関しましてドア内側にあるプラスティック札を外側にご提示いただく事でお伝えいただく事も可能です。お時間を変更してのお掃除ご依頼は13：00までになります。フロントに直接ご依頼ください。`
+    keywords:["掃除","清掃","そうじ"],
+    answer:`お掃除は毎朝10:00より開始となります。`
   }
 ];
 
-function findAnswer(query){
-  query = query.toLowerCase();
-  for(const item of faq){
-    for(const kw of item.keywords){
-      if(query.includes(kw)) return item.answer;
+function findAnswer(q){
+  q=q.toLowerCase();
+  for(const f of faq){
+    for(const k of f.keywords){
+      if(q.includes(k)) return f.answer;
     }
   }
   return "申し訳ありません。その質問にはまだ対応していません。0299-90-0500までお問い合わせください。";
 }
 
-const messages = document.getElementById("messages");
-const userInput = document.getElementById("userInput");
-const sendBtn = document.getElementById("sendBtn");
-const micBtn = document.getElementById("micBtn");
+const messages=document.getElementById("messages");
+const userInput=document.getElementById("userInput");
+const sendBtn=document.getElementById("sendBtn");
+const micBtn=document.getElementById("micBtn");
 
-function addBotMessageTypewriter(text){
-  const div = document.createElement("div");
-  div.className = "msg bot";
-  messages.appendChild(div);
-  let i = 0;
-  const timer = setInterval(()=>{
-    div.textContent += text.charAt(i++);
-    messages.scrollTop = messages.scrollHeight;
-    if(i >= text.length) clearInterval(timer);
-  }, 25);
+function addBot(text){
+  const d=document.createElement("div");
+  d.className="msg bot";
+  messages.appendChild(d);
+  let i=0;
+  const t=setInterval(()=>{
+    d.textContent+=text.charAt(i++);
+    messages.scrollTop=messages.scrollHeight;
+    if(i>=text.length) clearInterval(t);
+  },25);
 }
 
-function addMessage(msg, isUser=false){
-  if(isUser){
-    const div = document.createElement("div");
-    div.className = "msg user";
-    div.textContent = msg;
-    messages.appendChild(div);
-    messages.scrollTop = messages.scrollHeight;
+function addMsg(msg,user=false){
+  if(user){
+    const d=document.createElement("div");
+    d.className="msg user";
+    d.textContent=msg;
+    messages.appendChild(d);
+    messages.scrollTop=messages.scrollHeight;
   }else{
-    addBotMessageTypewriter(msg);
+    addBot(msg);
   }
 }
 
-sendBtn.onclick = () => {
-  const msg = userInput.value.trim();
+sendBtn.onclick=()=>{
+  const msg=userInput.value.trim();
   if(!msg) return;
-  addMessage(msg, true);
-  setTimeout(()=>addMessage(findAnswer(msg)), 100);
-  userInput.value = "";
+  addMsg(msg,true);
+  setTimeout(()=>addMsg(findAnswer(msg)),100);
+  userInput.value="";
 };
 
-userInput.addEventListener("keydown", e=>{
-  if(e.key === "Enter"){
-    e.preventDefault();
-    sendBtn.click();
-  }
-});
+let recognition=null;
+let isRecording=false;
 
-const placeholders = [
-  "ご質問を入力ください",
-  "音声入力はマイクをPush！",
-  "チェックイン時の不明点や、",
-  "駐車場、食事などお尋ねください",
-  "お電話なら0299-90-0500まで.."
-];
-let phIndex = 0;
-setInterval(()=>{
-  userInput.placeholder = placeholders[phIndex];
-  phIndex = (phIndex + 1) % placeholders.length;
-}, 3000);
+if(window.SpeechRecognition||window.webkitSpeechRecognition){
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  recognition=new SR();
+  recognition.lang="ja-JP";
 
-let recognition = null;
-let isRecording = false;
-
-if(window.SpeechRecognition || window.webkitSpeechRecognition){
-  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-  recognition = new SR();
-  recognition.lang = "ja-JP";
-
-  recognition.onstart = ()=>{
-    isRecording = true;
+  recognition.onstart=()=>{
+    isRecording=true;
     micBtn.classList.add("recording");
-    micBtn.textContent = "●";
+    micBtn.textContent="●";
   };
-  recognition.onend = recognition.onerror = ()=>{
-    isRecording = false;
+
+  recognition.onend=()=>{
+    isRecording=false;
     micBtn.classList.remove("recording");
-    micBtn.textContent = "🎤";
+    micBtn.textContent="🎤";
   };
-  recognition.onresult = e=>{
-    userInput.value = e.results[0][0].transcript;
+
+  recognition.onresult=e=>{
+    userInput.value=e.results[0][0].transcript;
     sendBtn.click();
   };
 }
 
-function startVoice(){
-  const ua = navigator.userAgent;
-
+/* ===== 長押し式（iOS最安定） ===== */
+function startRec(){
+  const ua=navigator.userAgent;
   if(ua.includes("Edg/")){
-    alert("Edgeでは音声入力は利用できません。\nChrome または Safari をご利用ください。");
+    alert("Edgeでは音声入力は利用できません。");
     return;
   }
-  if(!recognition){
-    alert("このブラウザでは音声入力に対応していません。");
-    return;
+  if(!recognition||isRecording) return;
+  recognition.start();
+}
+
+function stopRec(){
+  if(recognition&&isRecording){
+    recognition.stop();
   }
-  if(isRecording) return;
-
-  try{ recognition.start(); }catch(e){}
 }
 
-micBtn.onclick = startVoice;
-
-micBtn.addEventListener("pointerdown", e=>{
-  e.preventDefault();
-  startVoice();
-});
-
-const AUTO_CLOSE_TIME = 180000;
-let autoTimer = null;
-
-function resetTimer(){
-  clearTimeout(autoTimer);
-  autoTimer = setTimeout(()=>{
-    window.location.href = "https://www.kashimaparkhotel.com/";
-  }, AUTO_CLOSE_TIME);
-}
-
-["click","keydown","mousemove","scroll","pointerdown"].forEach(ev=>{
-  document.addEventListener(ev, resetTimer, { passive:true });
-});
-resetTimer();
-
-/* ======== JSここまで ======== */
+micBtn.addEventListener("touchstart",e=>{e.preventDefault();startRec();},{passive:false});
+micBtn.addEventListener("touchend",e=>{e.preventDefault();stopRec();},{passive:false});
+micBtn.addEventListener("mousedown",startRec);
+micBtn.addEventListener("mouseup",stopRec);
 </script>
 
 </body>
 </html>
+
