@@ -267,7 +267,7 @@ if(window.SpeechRecognition || window.webkitSpeechRecognition){
   };
 }
 
-micBtn.onclick = ()=>{
+function startVoice(){
   const ua = navigator.userAgent;
 
   if(ua.includes("Edg/")){
@@ -281,7 +281,15 @@ micBtn.onclick = ()=>{
   if(isRecording) return;
 
   try{ recognition.start(); }catch(e){}
-};
+}
+
+micBtn.onclick = startVoice;
+
+/* ★ スマホ安定化：ユーザー操作として認識させる */
+micBtn.addEventListener("pointerdown", e=>{
+  e.preventDefault();
+  startVoice();
+});
 
 const AUTO_CLOSE_TIME = 180000;
 let autoTimer = null;
@@ -293,7 +301,7 @@ function resetTimer(){
   }, AUTO_CLOSE_TIME);
 }
 
-["click","keydown","mousemove","scroll"].forEach(ev=>{
+["click","keydown","mousemove","scroll","pointerdown"].forEach(ev=>{
   document.addEventListener(ev, resetTimer, { passive:true });
 });
 resetTimer();
