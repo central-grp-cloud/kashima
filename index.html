@@ -9,7 +9,6 @@
 *, *::before, *::after { box-sizing: border-box; }
 html, body { margin: 0; padding: 0; }
 
-//
 #chatbox {
   width: 360px;
   max-width: 95vw;
@@ -54,11 +53,11 @@ html, body { margin: 0; padding: 0; }
   margin: 6px 0;
   padding: 10px 12px;
   border-radius: 10px;
-  max-width: 95%;             
+  max-width: 95%;
   word-wrap: break-word;
   font-size: 14px;
-  line-height: 1.6;           
-  text-align: left;            
+  line-height: 1.6;
+  text-align: left;
 }
 
 .user {
@@ -86,7 +85,6 @@ html, body { margin: 0; padding: 0; }
   font-size: 14px;
 }
 
-//
 #micBtn,
 #sendBtn {
   width: 44px;
@@ -125,7 +123,6 @@ html, body { margin: 0; padding: 0; }
   100% { box-shadow: 0 0 0 0 rgba(255,82,82,0); }
 }
 
-//
 @media screen and (max-width: 600px) {
   #chatbox {
     left: 50%;
@@ -160,12 +157,10 @@ html, body { margin: 0; padding: 0; }
 </div>
 
 <script>
-//
 document.querySelector(".backBtn").onclick = () => {
   window.location.href = "https://www.kashimaparkhotel.com/";
 };
 
-//
 const faq = [
   {
     keywords: ["チェックイン","ちぇっくいん","チェックイン時間"],
@@ -191,13 +186,11 @@ function findAnswer(query){
   return "申し訳ありません。頂きました質問にはまだ対応していません。0299-90-0500までお問い合わせください。";
 }
 
-//
 const messages = document.getElementById("messages");
 const userInput = document.getElementById("userInput");
 const sendBtn = document.getElementById("sendBtn");
 const micBtn = document.getElementById("micBtn");
 
-//
 function addBotMessageTypewriter(text){
   const div = document.createElement("div");
   div.className = "msg bot";
@@ -222,7 +215,6 @@ function addMessage(msg, isUser=false){
   }
 }
 
-//
 sendBtn.onclick = () => {
   const msg = userInput.value.trim();
   if(!msg) return;
@@ -231,7 +223,6 @@ sendBtn.onclick = () => {
   userInput.value = "";
 };
 
-//
 userInput.addEventListener("keydown", e=>{
   if(e.key === "Enter"){
     e.preventDefault();
@@ -239,7 +230,6 @@ userInput.addEventListener("keydown", e=>{
   }
 });
 
-//
 const placeholders = [
   "ご質問を入力ください",
   "音声入力はマイクをPush！",
@@ -253,7 +243,6 @@ setInterval(()=>{
   phIndex = (phIndex + 1) % placeholders.length;
 }, 3000);
 
-//
 let recognition = null;
 let isRecording = false;
 
@@ -294,7 +283,6 @@ micBtn.onclick = ()=>{
   try{ recognition.start(); }catch(e){}
 };
 
-//
 const AUTO_CLOSE_TIME = 180000;
 let autoTimer = null;
 
