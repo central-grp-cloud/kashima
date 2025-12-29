@@ -6,8 +6,59 @@
   <title>セントラルホテルグループQ&Aチャット</title>
 
 <style>
+/* ===============================
+   背景レイヤー（公式ページ再構築）
+================================ */
 *, *::before, *::after { box-sizing: border-box; }
-html, body { margin: 0; padding: 0; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* 背景（公式ページ風） */
+#bg-layer {
+  position: fixed;
+  inset: 0;
+  overflow-y: auto;
+  background: #ffffff;
+  z-index: 0;
+  pointer-events: none; /* マスク化：背景は操作不可 */
+}
+
+.site-header {
+  background: #2e7d32;
+  color: #fff;
+  padding: 16px;
+}
+
+.site-main {
+  padding: 16px;
+  line-height: 1.8;
+}
+
+.site-footer {
+  padding: 16px;
+  background: #f0f0f0;
+  font-size: 12px;
+}
+
+/* ===============================
+   チャット前面マスク
+================================ */
+#chat-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(255,255,255,0.65);
+  backdrop-filter: blur(4px);
+}
+
+/* ===============================
+   ↓↓↓ ここから下は元のチャットCSS（変更なし） ↓↓↓
+================================ */
 
 #chatbox {
   width: 360px;
@@ -24,7 +75,6 @@ html, body { margin: 0; padding: 0; }
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  z-index: 9999;
 }
 
 #chatHeader {
@@ -137,6 +187,29 @@ html, body { margin: 0; padding: 0; }
 
 <body>
 
+<!-- ===== 背景（公式ページ再構築） ===== -->
+<div id="bg-layer">
+  <header class="site-header">
+    <h1>鹿嶋パークホテル</h1>
+  </header>
+
+  <main class="site-main">
+    <h2>ご案内</h2>
+    <p>チェックイン 15:00 / チェックアウト 10:00</p>
+    <p>無料駐車場・館内Wi-Fi完備</p>
+
+    <h2>アクセス</h2>
+    <p>鹿島神宮駅より車で約10分</p>
+  </main>
+
+  <footer class="site-footer">
+    © Kashima Park Hotel
+  </footer>
+</div>
+
+<!-- ===== チャット（元コードそのまま） ===== -->
+<div id="chat-layer">
+
 <div id="chatbox">
   <div id="chatHeader">
     <span class="backBtn" title="公式サイトへ戻る">←</span>
@@ -156,7 +229,11 @@ html, body { margin: 0; padding: 0; }
   </div>
 </div>
 
+</div>
+
 <script>
+/* ======== ここからJS全文（変更なし） ======== */
+
 document.querySelector(".backBtn").onclick = () => {
   window.location.href = "https://www.kashimaparkhotel.com/";
 };
@@ -285,7 +362,6 @@ function startVoice(){
 
 micBtn.onclick = startVoice;
 
-/* 音声入力安定化 */
 micBtn.addEventListener("pointerdown", e=>{
   e.preventDefault();
   startVoice();
@@ -305,6 +381,8 @@ function resetTimer(){
   document.addEventListener(ev, resetTimer, { passive:true });
 });
 resetTimer();
+
+/* ======== JSここまで ======== */
 </script>
 
 </body>
