@@ -6,9 +6,7 @@
   <title>セントラルホテルグループQ&Aチャット</title>
 
 <style>
-/* ===============================
-   背景レイヤー（公式ページ再構築）
-================================ */
+
 *, *::before, *::after { box-sizing: border-box; }
 
 html, body {
@@ -18,14 +16,14 @@ html, body {
   font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
-/* 背景（公式ページ風） */
+
 #bg-layer {
   position: fixed;
   inset: 0;
   overflow-y: auto;
   background: #ffffff;
   z-index: 0;
-  pointer-events: none; /* マスク化：背景は操作不可 */
+  pointer-events: none; 
 }
 
 .site-header {
@@ -45,9 +43,7 @@ html, body {
   font-size: 12px;
 }
 
-/* ===============================
-   チャット前面マスク
-================================ */
+
 #chat-layer {
   position: fixed;
   inset: 0;
@@ -56,9 +52,7 @@ html, body {
   backdrop-filter: blur(4px);
 }
 
-/* ===============================
-   ↓↓↓ ここから下は元のチャットCSS（変更なし） ↓↓↓
-================================ */
+
 
 #chatbox {
   width: 360px;
@@ -187,7 +181,7 @@ html, body {
 
 <body>
 
-<!-- ===== 背景（公式ページ再構築） ===== -->
+
 <div id="bg-layer">
   <header class="site-header">
     <h1>鹿嶋パークホテル</h1>
@@ -207,7 +201,7 @@ html, body {
   </footer>
 </div>
 
-<!-- ===== チャット（元コードそのまま） ===== -->
+
 <div id="chat-layer">
 
 <div id="chatbox">
@@ -232,7 +226,7 @@ html, body {
 </div>
 
 <script>
-/* ======== ここからJS全文（変更なし） ======== */
+
 
 document.querySelector(".backBtn").onclick = () => {
   window.location.href = "https://www.kashimaparkhotel.com/";
@@ -382,7 +376,7 @@ function resetTimer(){
 });
 resetTimer();
 
-/* ======== JSここまで ======== */
+
 </script>
 
 </body>
